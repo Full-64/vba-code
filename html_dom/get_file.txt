@@ -1,0 +1,42 @@
+Sub htmlGetValue()
+    Dim i As Long
+    Dim j As Long
+    Dim objXML As New MSHTML.HTMLDocument
+    Dim htmlDoc As New MSHTML.HTMLDocument
+    Dim objITEM As Object
+ 
+    ' 事前に出力されたHTMLファイルを取り扱う
+    Set htmlDoc = objXML.createDocumentFromUrl("file:///C:\Users\test.html", vbNullString)
+ 
+    Call untilReady(htmlDoc)
+    
+    Range("A1").CurrentRegion.Offset(1, 0).ClearContents
+    i = 2
+    j = 1
+    For Each objITEM In htmlDoc.getElementsByTagName("td")
+        Cells(i, j) = objITEM.innerText
+        j = j + 1
+        If j > 3 Then
+            j = 1
+            i = i + 1
+        End If
+    Next
+    Debug.Print htmlDoc.getElementById("site-description").innerText
+
+    Set objITEM = Nothing
+    Set htmlDoc = Nothing
+    Set objXML = Nothing
+
+End Sub
+
+Sub untilReady(htmlDoc As MSHTML.HTMLDocument, Optional ByVal WaitTime As Integer = 10)
+    Dim starttime As Date
+    starttime = Now()
+    Do Until htmlDoc.readyState = "complete"
+        DoEvents
+        If Now() > DateAdd("S", WaitTime, starttime) Then
+            Exit Do
+        End If
+    Loop
+    DoEvents
+End Sub

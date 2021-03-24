@@ -1,0 +1,36 @@
+Sub CopyWeeklyReport()
+    Dim filename As String
+    
+    filename = Format(Date, "yyyymmdd") & ".xlsm"
+    Worksheets(Array("memo", "diff")).Copy
+    ActiveWorkbook.SaveAs _
+    filename:="C:\Users\" & filename, _
+    FileFormat:=xlOpenXMLWorkbookMacroEnabled
+    Workbooks(filename).Close
+End Sub
+ 
+Sub CopyMemotoDaily()
+    Dim wbfrom As Workbook
+    Dim shfrom As Worksheet
+    Dim wbto As Workbook
+    Dim shto As Worksheet
+    Dim lastRowNo As Long
+    Dim lastRowNoto As Long
+    Dim i As Integer
+    
+    Set wbfrom = Workbooks("memo_weekly.xlsm")
+    Set shfrom = wbfrom.Worksheets("memo")
+    Set wbto = Workbooks.Open("C:\Users\業務予定.xlsx")
+    Set shto = wbto.Worksheets("業務一覧")
+    
+    lastRowNo = shfrom.Cells(Rows.Count, "A").End(xlUp).Row
+    lastRowNoto = shto.Cells(Rows.Count, "A").End(xlUp).Row
+    shto.Range(Cells(2, "A"), Cells(lastRowNoto, "F")).Clear
+    wbfrom.Activate
+    shfrom.Select
+    shfrom.Range(Cells(2, "A"), Cells(lastRowNo, "F")).Copy
+    wbto.Activate
+    shto.Select
+    shto.Range(Cells(2, "A"), Cells(lastRowNo, "F")).PasteSpecial xlPasteValues
+
+End Sub
